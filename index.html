@@ -3994,6 +3994,11 @@ function initDSECalendar() {
         s5: '2027-04-02',
         offsets: { s4: 1, s3: 2, s2: 3, s1: 4 }
     };
+    
+    function parseLocalDate(dateString) {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    }
 
     // === 2. 自動建立/獲取煙花畫布 ===
     let fireworksCanvas = document.getElementById('fireworksCanvas');
@@ -4138,11 +4143,12 @@ function initDSECalendar() {
         if (approxLabel) approxLabel.classList.toggle('hidden', !isApprox);
         
         if (currentGrade === 's6' || currentGrade === 's5') {
-            targetDate = new Date(config[currentGrade]);
+            targetDate = parseLocalDate(config[currentGrade]);
         } else {
-            const baseDate = new Date(config.s5);
+            const baseDate = parseLocalDate(config.s5);
             const yearsToAdd = config.offsets[currentGrade];
-            targetDate = new Date(baseDate.getTime() + (yearsToAdd * 365 * 24 * 60 * 60 * 1000));
+            targetDate = new Date(baseDate);
+            targetDate.setFullYear(targetDate.getFullYear() + yearsToAdd);
         }
         
         const now = new Date();
